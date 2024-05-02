@@ -18,7 +18,14 @@ exports.postAddProduct = (req, res, next) => {
   // console.log("Image URL:", imageUrl);
   // console.log("Price:", price);
   // console.log("Description:", description);
-  const product = new Product(title, imageUrl, price, description);
+  const product = new Product(
+    title,
+    imageUrl,
+    price,
+    description,
+    null,
+    req.user._id
+  );
 
   product
     .save()
@@ -65,7 +72,7 @@ exports.postEditProduct = (req, res, next) => {
     updatedPrice,
 
     updatedDesc,
-    new mongodb.ObjectId(prodId)
+    prodId
   );
 
   product
