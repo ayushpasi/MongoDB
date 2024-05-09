@@ -52,16 +52,25 @@ exports.getIndex = (req, res, next) => {
 };
 
 exports.getCart = (req, res, next) => {
+  console.log(req.user);
   req.user
-    .getCart()
+    .populate("cart.items.productId")
+
     .then((products) => {
+      console.log(products.cart.items);
+      products = products.cart.items;
       res.render("shop/cart", {
         path: "/cart",
         pageTitle: "Your Cart",
         products: products,
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      console.error(err);
+      res
+        .status(500)
+        .render("error", { errorMessage: "Error fetching cart items" });
+    });
 };
 
 exports.postCart = (req, res, next) => {

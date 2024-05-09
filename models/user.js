@@ -25,6 +25,38 @@ const userSchema = new Schema({
   },
 });
 
+userSchema.methods.addToCart = function (product) {
+  let newQuantity = 1;
+  if (this.cart == undefined) {
+    let addItem = {
+      items: [{ productId: product._id, quantity: newQuantity }],
+    };
+
+    const db = getDb();
+    return db
+      .collection("users")
+      .updateOne({ _id: this._id }, { $set: { cart: addItem } });
+  }
+  const updatedCartItems = [...this.cart.items];
+  const cartProductIndex = this.cart.items.findIndex((cp) => {
+    return cp.productId.toString() === product._id.toString();
+  });
+
+  if (cartProductIndex >= 0) {
+    newQuantity = this.cart.items[cartProductIndex].quantity + 1;
+    updatedCartItems[cartProductIndex].quantity = newQuantity;
+  } else {
+    updatedCartItems.push({
+      productId: product._id,
+      quantity: newQuantity,
+    });
+  }
+  const updatedCart = {
+    items: updatedCartItems,
+  };
+  this.cart = updatedCart;
+  return this.save();
+};
 module.exports = mongoose.model("User", userSchema);
 // const mongodb = require("mongodb");
 // const { ValidationErrorItem } = require("sequelize");
