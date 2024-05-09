@@ -52,12 +52,11 @@ exports.getIndex = (req, res, next) => {
 };
 
 exports.getCart = (req, res, next) => {
-  console.log(req.user);
+  // console.log(req.user);
   req.user
     .populate("cart.items.productId")
 
     .then((products) => {
-      console.log(products.cart.items);
       products = products.cart.items;
       res.render("shop/cart", {
         path: "/cart",
@@ -120,6 +119,7 @@ exports.postCartDeleteProduct = (req, res, next) => {
   req.user
     .deleteItemFromCart(prodId)
     .then((result) => {
+      console.log(result);
       res.redirect("/cart");
     })
     .catch((err) => console.log(err));
